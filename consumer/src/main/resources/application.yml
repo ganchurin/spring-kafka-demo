@@ -1,0 +1,12 @@
+server.port: 8081
+kafka.consumer:
+  bootstrap.servers: localhost:9092
+  group.id: group1
+  concurrency: 1
+  autoOffsetReset: earliest
+  maxPollRecords: 5
+  maxPollIntervalMs: 20000
+  topic: demo
+  delay: 2000
+logging:
+  file: application-${PID}.log

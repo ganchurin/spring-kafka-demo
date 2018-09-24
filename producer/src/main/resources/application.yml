@@ -1,0 +1,7 @@
+server.port: 8080
+kafka.producer:
+  bootstrap.servers: localhost:9092
+  topic: demo
+  delay: 1000
+logging:
+  file: application.log
