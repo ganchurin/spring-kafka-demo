@@ -5,7 +5,8 @@ kafka.consumer:
   concurrency: 1
   autoOffsetReset: earliest
   maxPollRecords: 5
-  maxPollIntervalMs: 20000
+  maxPollIntervalMs: 15000
+  metadataMaxAgeMs: 15000
   topic: demo
   delay: 2000
 logging:

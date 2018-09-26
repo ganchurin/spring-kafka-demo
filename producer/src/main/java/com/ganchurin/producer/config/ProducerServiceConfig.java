@@ -1,5 +1,6 @@
 package com.ganchurin.producer.config;
 
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,17 +13,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class ProducerConfig {
+public class ProducerServiceConfig {
 
   @Value("${kafka.producer.bootstrap.servers}")
   private String bootstrapServers;
 
+  @Value("${kafka.producer.metadataMaxAgeMs}")
+  private int metadataMaxAgeMs;
+
   @Bean
   public Map<String, Object> producerConfigs() {
     Map<String, Object> props = new HashMap<>();
-    props.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    props.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, metadataMaxAgeMs);
     return props;
   }
 

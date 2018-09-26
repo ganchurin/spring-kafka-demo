@@ -1,7 +1,8 @@
 server.port: 8080
 kafka.producer:
   bootstrap.servers: localhost:9092
+  metadataMaxAgeMs: 15000
   topic: demo
   delay: 1000
 logging:
-  file: application.log
+  file: application-${PID}.log

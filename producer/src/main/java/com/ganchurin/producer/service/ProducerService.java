@@ -1,9 +1,5 @@
 package com.ganchurin.producer.service;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -18,8 +14,6 @@ import java.time.ZonedDateTime;
 @Service
 public class ProducerService implements CommandLineRunner {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ProducerService.class);
-
   @Value("${kafka.producer.topic}")
   private String topic;
 
@@ -28,6 +22,8 @@ public class ProducerService implements CommandLineRunner {
 
   private final KafkaTemplate<String, String> template;
 
+  private final ListenableFutureCallback<SendResult<String, String>> callback = new ResultLoggingCallback();
+
   @Autowired
   public ProducerService(KafkaTemplate<String, String> template) {
     this.template = template;
@@ -35,7 +31,6 @@ public class ProducerService implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws InterruptedException {
-    ListenableFutureCallback<SendResult<String, String>> callback = new ResultLoggingCallback();
     while (true) {
       String message = getCurrentTime().toString();
       template.send(topic, message).addCallback(callback);
@@ -45,20 +40,5 @@ public class ProducerService implements CommandLineRunner {
 
   private static ZonedDateTime getCurrentTime() {
     return ZonedDateTime.now(ZoneOffset.UTC);
-  }
-
-  private static class ResultLoggingCallback implements ListenableFutureCallback<SendResult<String, String>> {
-
-    @Override
-    public void onFailure(Throwable throwable) {
-      LOG.error("Failed to send a message", throwable);
-    }
-
-    @Override
-    public void onSuccess(SendResult<String, String> result) {
-      ProducerRecord<String, String> record = result.getProducerRecord();
-      RecordMetadata metadata = result.getRecordMetadata();
-      LOG.info("Produced [{}] into [{}-{}]", record.value(), metadata.topic(), metadata.partition());
-    }
   }
 }
